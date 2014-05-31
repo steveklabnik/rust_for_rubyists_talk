@@ -48,6 +48,461 @@
 				</section>
 
 				<section>
+          <section>
+            <h1>Why Rust at a Ruby<br>conference?</h1>
+          </section>
+          <section>
+            <h2>"I don't need to worry about performance. If I do, I can just drop into C."</h2>
+          </section>
+          <section>
+<pre><code data-trim>
+$ cat hello.rb 
+puts "Hello, world."
+
+steve@computer:~/tmp$ time ruby hello.rb
+Hello, world.
+
+real  0m0.102s
+user  0m0.088s
+sys 0m0.014s
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+steve@computer:~/tmp$ cat hello.rs
+use std::io::println;
+
+fn main() {
+    println("Hello, world.");
+}
+
+steve@computer:~/tmp$ time ./hello
+Hello, world.
+
+real  0m0.004s
+user  0m0.001s
+sys 0m0.002s
+</code></pre>
+          </section>
+          <section>
+            <h2>How do you eat a Monorail?<br>One bite at a time.</h2>
+          </section>
+          <section>
+            <h2>I am not the only Rubyist<br />interested in Rust.</h2>
+          </section>
+          <section>
+            <h1>TL;DR</h1>
+            <h3>"Rust provides the safety and<br>conveninence of Ruby with the speed of native code." - wycats (ish)</h3>
+          </section>
+          <section>
+            <h1>#realtalk: Rust vs. Go</h1>
+          </section>
+        </section>
+
+				<section>
+          <section>
+            <h1>Learning the low level</h1>
+          </section>
+          <section>
+            <h1>Let's talk about pointers!</h1>
+          </section>
+          <section>
+            <h1>Stack vs Heap memory</h1>
+          </section>
+          <section>
+            <h3>Stack memory</h3>
+            <ul>
+              <li>Managed by the CPU</li>
+              <li>function-local</li>
+              <li>super fast</li>
+              <li>limits on size</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Heap memory</h3>
+            <ul>
+              <li>Managed by ... you? Your runtime?</li>
+              <li>global</li>
+              <li>much slower</li>
+            </ul>
+          </section>
+          <section>
+<p>Benchmarks!</p>
+<pre><code data-trim>
+steve@computer:~/tmp$ cat hello.rs
+extern crate test;
+
+use std::io::println;
+
+    fn main() {
+        println("Hello, world.");
+    }
+
+#[bench]
+fn stack_allocate(b: &amp;mut test::BenchHarness) {
+    b.iter(|| { let x = 5; });
+}
+
+#[bench]
+fn heap_allocate(b: &amp;mut test::BenchHarness) {
+    b.iter(|| { let x = box 5; });
+}
+</code></pre>
+          </section>
+          <section>
+<p>Benchmarks!</p>
+<pre><code data-trim>
+steve@computer:~/tmp$ rustc hello.rs --test
+hello.rs:5:5: 7:6 warning: code is never used: `main`, #[warn(dead_code)] on by default
+hello.rs:5     fn main() {
+hello.rs:6         println("Hello, world.");
+hello.rs:7     }
+hello.rs:11:21: 11:22 warning: unused variable: `x`, #[warn(unused_variable)] on by default
+hello.rs:11     b.iter(|| { let x = 5; });
+                                ^
+hello.rs:16:21: 16:22 warning: unused variable: `x`, #[warn(unused_variable)] on by default
+hello.rs:16     b.iter(|| { let x = box 5; });
+                                ^
+</code></pre>
+          </section>
+          <section>
+<p>Benchmarks!</p>
+<pre><code data-trim>
+steve@computer:~/tmp$ ./hello --bench
+
+running 2 tests
+test heap_allocate  ... bench:       243 ns/iter (+/- 10)
+test stack_allocate ... bench:        77 ns/iter (+/- 1)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 2 measured
+
+</code></pre>
+          </section>
+          <section>
+            <h2>In Ruby, everything is heap allocated.</h2>
+          </section>
+          <section>
+            <h2>In Rust, we prefer stack memory, but also have safe heap memory.</h2>
+          </section>
+          <section>
+            <h2>Safety?</h2>
+          </section>
+          <section>
+<pre><code data-trim>
+#include&lt;stdio.h&gt;
+#include&lt;string.h&gt;
+
+int main(void)
+{
+     char s[12];
+     memcpy(s, "hello world\n", 12);
+
+     printf("%s", s);
+}
+
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+#include&lt;stdio.h&gt;
+#include&lt;string.h&gt;
+
+char *make_string(void);
+
+int main(void)
+{
+    char *s = make_string();
+
+    printf("%s\n", s);
+}
+
+char *make_string() {
+    char s[12];
+    memcpy(s, "hello world", 11);
+
+    return s;
+}
+</code></pre>
+          </section>
+        </section>
+
+				<section>
+          <section>
+            <h1>Let's see some code!</h1>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+    let nums = [1, 2];
+    let noms = ["Steve", "Matz", "Aaron", "David"];
+
+    let mut odds = nums.iter().map(|&amp;x| x * 2 - 1);
+
+    for num in odds {
+        spawn(proc() {
+            println!("{:s} says hello from a lightweight thread!", noms[num]);
+        });
+    }
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+  // A simple integer calculator:
+  // `+` or `-` means add/sub by 1
+  // `*` or `/` means mul/div by 2
+ 
+  let program = "+ + * - /";
+  let mut accumulator = 0;
+ 
+  for token in program.chars() {
+    match token {
+      '+' =&gt; accumulator += 1,
+      '-' =&gt; accumulator -= 1,
+      '*' =&gt; accumulator *= 2,
+      '/' =&gt; accumulator /= 2,
+      _ =&gt; { /* ignore everything else */ }
+    }
+  }
+ 
+  println!("The program \"{}\" calculates the value {}",
+       program, accumulator);
+}
+
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn plus_one(x: &amp;int) -&gt; int {
+    *x + 1
+}
+
+fn main() {
+    let x = 5;
+    println!("{}", plus_one(&amp;x));
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn plus_one(x: &amp;int) -&gt; int {
+    *x + 1
+}
+
+fn main() {
+    let x = box 5;
+    println!("{}", plus_one(&amp;x));
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+    let (chan, port) = channel();
+
+    spawn(proc() {
+        let result = 5;
+        chan.send(result);
+    });
+
+    let result = port.recv();
+    println!("{:d}", result);
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+    let (chan, port) = channel();
+    let x = box 5;
+
+    spawn(proc() {
+        let result = 5 + *x;
+        chan.send(result);
+    });
+
+    let result = port.recv();
+    println!("{:d}", result);
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+    let (chan, port) = channel();
+    let x = box 5;
+
+    spawn(proc() {
+        let result = 5 + *x;
+        chan.send(result);
+    });
+
+    *x += 1;
+
+    let result = port.recv();
+    println!("{:d}", result);
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+hello.rs:10:6: 10:7 error: use of moved value: `x`
+hello.rs:10     *x += 1;
+                 ^
+hello.rs:5:11: 8:6 note: `x` moved into closure environment here because it has type `proc:Send()`, which is non-copyable (perhaps you meant to use clone()?)
+hello.rs:5     spawn(proc() {
+hello.rs:6         let result = 1 + *x;
+hello.rs:7         chan.send(result);
+hello.rs:8     });
+hello.rs:10:5: 10:7 error: cannot assign to immutable dereference of `~`-pointer `*x`
+hello.rs:10     *x += 1;
+                ^~
+error: aborting due to 2 previous errors
+
+shell returned 101
+
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+    let x: int;
+    println!("{}", x);
+}
+
+hello.rs:3:20: 3:21 error: use of possibly uninitialized variable: `x`
+hello.rs:3     println!("{}", x);
+                              ^
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn foo() -&gt; Box&lt;str&gt; {
+    box "a boxed string"
+}
+
+fn bar() -&gt; Option&lt;Box&lt;str&gt;&gt; {
+    Some(box "a boxed string")
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+fn main() {
+    let msg = bar();
+
+    match msg {
+        Some(ref m) =&gt; std::io::println(*m),
+        None =&gt; ()
+    }
+}
+
+fn foo() -&gt; Box&lt;str&gt; {
+    box "a boxed string"
+}
+
+fn bar() -&gt; Option&lt;Box&lt;str&gt;&gt; {
+    Some(box "a boxed string")
+}
+
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+struct TimeBomb {
+    explosivity: uint
+}
+
+impl Drop for TimeBomb {
+    fn drop(&amp;mut self) {
+        for _ in range(0, self.explosivity) {
+            println!("blam!");
+        }
+    }
+}
+
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+trait Printable {
+    fn print(&amp;self);
+}
+
+impl Printable for TimeBomb {
+    fn print(&amp;self) { println!("My counter is:{}", self.explosivity) }
+}
+
+let x = TimeBomb { explosivity: 5 };
+
+x.print();
+
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+//fail
+fn print_all<T>(printable_things: Vec&lt;T&gt;) {
+    for thing in printable_things.iter() {
+        thing.print();
+    }
+}
+
+//succeed
+fn print_all<T: Printable>(printable_things: Vec&lt;T&gt;) {
+    for thing in printable_things.iter() {
+        thing.print();
+    }
+}
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+impl Printable for int {
+    fn print(&amp;self) { println!("{}", *self) }
+}
+
+5.print();
+</code></pre>
+          </section>
+          <section>
+<pre><code data-trim>
+extern mod active_support;
+use active_support::Period;
+use active_support::Time;
+
+fn main() {
+  let time = Time::now();
+  println!("{:?}", time);
+  println!("{:?}", 2.days().from_now());
+  println!("{:?}", 2.weeks().from_now());
+  println!("{:?}", 2.months().from_now());
+  println!("{:?}", 2.years().from_now());
+}
+</code></pre>
+          </section>
+        </section>
+
+				<section>
+          <section>
+            <h1>Yeah, but what about production?</h1>
+          </section>
+          <section>
+            <p>Rust is not yet 1.0</p>
+          </section>
+          <section>
+            <p>Three known production deployments</p>
+          </section>
+          <section>
+            <p>Stable...ish</p>
+          </section>
+          <section>
+            <p>Communicating about stability</p>
+          </section>
+          <section>
+            <p>1.0 this year</p>
+          </section>
         </section>
 
 				<section>
