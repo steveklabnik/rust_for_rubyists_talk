@@ -453,7 +453,7 @@ fn print_all<T>(printable_things: Vec&lt;T&gt;) {
 }
 
 //succeed
-fn print_all<T: Printable>(printable_things: Vec&lt;T&gt;) {
+fn print_all&lt;T: Printable&gt;(printable_things: Vec&lt;T&gt;) {
     for thing in printable_things.iter() {
         thing.print();
     }
@@ -508,8 +508,6 @@ fn main() {
           </section>
         </section>
 
-				<section>
-				</section>
 				<section>
           <section>
             <h1>Learning more</h1>
