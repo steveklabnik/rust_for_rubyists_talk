@@ -52,7 +52,7 @@
             <h1>Why Rust at a JavaScript<br>meetup?</h1>
           </section>
           <section>
-            <h2>"I don't need to worry about performance. If I do, I can just drop into C."</h2>
+		  <h2>"I don't need to worry about<br />performance. If I do,<br />I can just drop into C."</h2>
           </section>
           <section>
 <pre><code data-trim>
@@ -92,7 +92,7 @@ sys 0m0.002s
           </section>
           <section>
             <h1>TL;DR</h1>
-            <h3>"Rust provides the safety and<br>conveninence of Ruby with the speed of native code." - wycats (ish)</h3>
+            <h2>"Rust provides the safety and<br>conveninence of Ruby with the speed of native code." - wycats (ish)</h2>
           </section>
           <section>
             <h1>#realtalk: Rust vs. Go</h1>
@@ -101,13 +101,13 @@ sys 0m0.002s
 
 				<section>
           <section>
-            <h1>Learning the low level</h1>
+		  <h1>Learning the<br />low level</h1>
           </section>
           <section>
-            <h1>Let's talk about pointers!</h1>
+		  <h1>Let's talk about<br />pointers!</h1>
           </section>
           <section>
-            <h1>Stack vs Heap memory</h1>
+		  <h1>Stack vs Heap<br />memory</h1>
           </section>
           <section>
             <h3>Stack memory</h3>
@@ -179,7 +179,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 2 measured
 </code></pre>
           </section>
           <section>
-            <h2>In JavaScript, everything is heap allocated.</h2>
+		  <h2>In JavaScript, everything is<br />heap allocated.</h2>
           </section>
           <section>
             <h2>In Rust, we prefer stack memory, but also have safe heap memory.</h2>
@@ -225,7 +225,7 @@ char *make_string() {
 </code></pre>
           </section>
           <section>
-            <h2>Every Firefox bug in Pwn2Own was related to memory safety.<br><br>All would have been impossible in Rust.</h2>
+		  <h2>Every Firefox bug in Pwn2Own was<br />related to memory safety.<br><br>All would have been impossible in Rust.</h2>
           </section>
         </section>
 
@@ -483,6 +483,20 @@ fn main() {
   println!("{:?}", 2.months().from_now());
   println!("{:?}", 2.years().from_now());
 }
+</code></pre>
+          </section>
+          <section>
+		  <h1>Cargo!</h1>
+<pre><code data-trim>
+[package]
+
+name = "edges"
+version = "0.1.0"
+authors = [ "steve@steveklabnik.com" ]
+
+[dependencies.hamcrest]
+
+git = "https://github.com/carllerche/hamcrest-rust.git"
 </code></pre>
           </section>
         </section>
