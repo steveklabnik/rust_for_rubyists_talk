@@ -37,7 +37,8 @@
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section>
-          <h1>Rust: the good parts</h1>
+          <h1>Rust for Rubyists</h1>
+	  <h3>(and others</h3>
           <p>
           By <a href="http://steveklabnik.com">Steve Klabnik</a>
           </p>
@@ -49,7 +50,7 @@
 
         <section>
           <section>
-            <h1>Why Rust at a JavaScript<br>meetup?</h1>
+		  <h1>Why Rust?</h1>
           </section>
           <section>
       <h2>"I don't need to worry about<br />performance. If I do,<br />I can just drop into C."</h2>
@@ -94,141 +95,10 @@ sys 0m0.002s
             <h1>TL;DR</h1>
             <h2>"Rust provides the safety and<br>conveninence of Ruby with the speed of native code." - wycats (ish)</h2>
           </section>
-          <section>
-            <h1>#realtalk: Rust vs. Go</h1>
-          </section>
         </section>
 
         <section>
           <section>
-      <h1>Learning the<br />low level</h1>
-          </section>
-          <section>
-      <h1>Let's talk about<br />pointers!</h1>
-          </section>
-          <section>
-      <h1>Stack vs Heap<br />memory</h1>
-          </section>
-          <section>
-            <h3>Stack memory</h3>
-            <ul>
-              <li>Managed by the CPU</li>
-              <li>function-local</li>
-              <li>super fast</li>
-              <li>limits on size</li>
-            </ul>
-          </section>
-          <section>
-            <h3>Heap memory</h3>
-            <ul>
-              <li>Managed by ... you? Your runtime?</li>
-              <li>global</li>
-              <li>much slower</li>
-            </ul>
-          </section>
-          <section>
-<p>Benchmarks!</p>
-<pre><code data-trim>
-steve@computer:~/tmp$ cat hello.rs
-extern crate test;
-
-use std::io::println;
-
-    fn main() {
-        println("Hello, world.");
-    }
-
-#[bench]
-fn stack_allocate(b: &amp;mut test::BenchHarness) {
-    b.iter(|| { let x = 5; });
-}
-
-#[bench]
-fn heap_allocate(b: &amp;mut test::BenchHarness) {
-    b.iter(|| { let x = box 5; });
-}
-</code></pre>
-          </section>
-          <section>
-<p>Benchmarks!</p>
-<pre><code data-trim>
-steve@computer:~/tmp$ rustc hello.rs --test
-hello.rs:5:5: 7:6 warning: code is never used: `main`, #[warn(dead_code)] on by default
-hello.rs:5     fn main() {
-hello.rs:6         println("Hello, world.");
-hello.rs:7     }
-hello.rs:11:21: 11:22 warning: unused variable: `x`, #[warn(unused_variable)] on by default
-hello.rs:11     b.iter(|| { let x = 5; });
-                                ^
-hello.rs:16:21: 16:22 warning: unused variable: `x`, #[warn(unused_variable)] on by default
-hello.rs:16     b.iter(|| { let x = box 5; });
-                                ^
-</code></pre>
-          </section>
-          <section>
-<p>Benchmarks!</p>
-<pre><code data-trim>
-steve@computer:~/tmp$ ./hello --bench
-
-running 2 tests
-test heap_allocate  ... bench:       243 ns/iter (+/- 10)
-test stack_allocate ... bench:        77 ns/iter (+/- 1)
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 2 measured
-
-</code></pre>
-          </section>
-          <section>
-      <h2>In JavaScript, everything is<br />heap allocated.</h2>
-          </section>
-          <section>
-            <h2>In Rust, we prefer stack memory, but also have safe heap memory.</h2>
-          </section>
-          <section>
-            <h2>Safety?</h2>
-          </section>
-          <section>
-<pre><code data-trim>
-#include&lt;stdio.h&gt;
-#include&lt;string.h&gt;
-
-int main(void)
-{
-     char s[12];
-     memcpy(s, "hello world\n", 12);
-
-     printf("%s", s);
-}
-
-</code></pre>
-          </section>
-          <section>
-<pre><code data-trim>
-#include&lt;stdio.h&gt;
-#include&lt;string.h&gt;
-
-char *make_string(void);
-
-int main(void)
-{
-    char *s = make_string();
-
-    printf("%s\n", s);
-}
-
-char *make_string() {
-    char s[12];
-    memcpy(s, "hello world", 11);
-
-    return s;
-}
-</code></pre>
-          </section>
-          <section>
-      <h2>Every Firefox bug in Pwn2Own was<br />related to memory safety.<br><br>All would have been impossible in Rust.</h2>
-          </section>
-        </section>
-
         <section>
           <section>
             <h1>Let's see some code!</h1>
@@ -530,7 +400,7 @@ git = "https://github.com/carllerche/hamcrest-rust.git"
           <section>
             <h1>Introductions</h1>
             <ul>
-              <li>The official tutorial</li>
+              <li>The official Guide</li>
               <li>Rust for Rubyists</li>
               <li>Rust by Example</li>
             </ul>
@@ -541,7 +411,6 @@ git = "https://github.com/carllerche/hamcrest-rust.git"
               <li>The rust-dev mailing list</li>
               <li>/r/rust</li>
               <li>#rust on irc.mozilla.org</li>
-              <li>This Week in Rust</li>
             </ul>
           </section>
           <section>
